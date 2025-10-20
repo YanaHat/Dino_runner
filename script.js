@@ -20,6 +20,10 @@ let soundToggle = document.getElementById("soundToggle");
 let recordText = document.getElementById("recordText");
 let cactusContainer = document.getElementById("cactusContainer");
 let birdContainer = document.getElementById("birdsLayer");
+let pauseMenu = document.getElementById("pauseMenu");
+let resumeBtn = document.getElementById("resumeBtn");
+let pauseToMenuBtn = document.getElementById("pauseToMenuBtn");
+let pauseBtn = document.getElementById("pauseBtn"); // уже есть в HTML
 
 // === НАСТРОЙКИ ===
 let gameSpeed = 7;
@@ -53,6 +57,13 @@ recordBtn.onclick = showRecord;
 recordBackBtn.onclick = () => toggleScreen(menu);
 restartBtn.onclick = restartGame;
 goToMenuBtn.onclick = () => toggleScreen(menu);
+pauseBtn.onclick = pauseGame;
+resumeBtn.onclick = resumeGame;
+pauseToMenuBtn.onclick = () => {
+    toggleScreen(menu);
+    pauseMenu.classList.add("hidden");
+    isPaused = false;
+}    
 
 function toggleScreen(screenToShow) {
   [menu, settings, game, recordScreen, gameOverMenu].forEach(s => s.style.display = "none");
@@ -107,7 +118,7 @@ let lastSpeedIncreaseScore = 0;
 let birdSpawnInterval = 2500;
 
 function gameLoop(timestamp) {
-    if (isGameOver) return;
+    if (isGameOver || isPaused) return;
     if (!lastFrameTime) lastFrameTime = timestamp;
 
     let delta = (timestamp - lastFrameTime) / 16.6667; // нормализация по 60 fps
@@ -162,8 +173,18 @@ function startGame() {
     return;
 }
 
+let isPaused = false;  // глобальная переменная
 function pauseGame() {
-    
+  if (isGameOver || isPaused) return; // нельзя паузить, если уже конец
+  isPaused = true;
+  document.getElementById("pauseMenu").classList.remove("hidden");
+}
+
+function resumeGame() {
+  isPaused = false;
+  pauseMenu.classList.add("hidden");
+  lastFrameTime = performance.now(); // чтобы не было скачка
+  requestAnimationFrame(gameLoop);   // продолжаем игру
 }
 
 // === ПРОИГРЫШ ===

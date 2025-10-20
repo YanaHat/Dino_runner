@@ -66,6 +66,24 @@ button:hover {
   overflow: hidden;
 }
 
+#pauseMenu {
+  border-radius: 20px;
+  padding: 30px;
+  width: 320px;
+  margin: 80px auto;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  background-color: rgb(242, 255, 255);
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+#pauseBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+}
+
 /* Динозавр */
 #dino {
   width: 80px;
@@ -138,6 +156,7 @@ button:hover {
   background-size: 80px 50px;
 }
 
+
 /* Анимации */
 @keyframes jump {
     0% { top: 145px; }
@@ -153,4 +172,8 @@ button:hover {
 @keyframes recordFlash {
   0%, 100% { background-color: var(--bg-color); }
   50% { background-color: rgba(255, 63, 63, 0.968); }
+}
+
+.hidden {
+  display: none;
 }
