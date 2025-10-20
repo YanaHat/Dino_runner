@@ -1,0 +1,54 @@
+<!DOCTYPE html> 
+<html lang="ru"> 
+<head> 
+    <meta charset="UTF-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <title>Динозаврик</title> 
+    <link rel="stylesheet" href="style.css" /> 
+</head> 
+<body> 
+    <!-- Главное меню --> 
+    <div id="menu"> 
+        <h1>🦖 Динозаврик</h1> 
+        <button id="playBtn">Играть</button> 
+        <button id="settingsBtn">Настройки</button> 
+        <button id="recordBtn">Рекорд</button> 
+        <button id="exitBtn" onclick="window.close()">Выход</button> 
+    </div> 
+    
+    <!-- Настройки --> 
+    <div class="settings" id="settings"> 
+        <h2>⚙️ Настройки</h2> 
+         
+        <label>Фон: <select id="bgSelect"> 
+            <option value="day">День</option> 
+            <option value="night">Ночь</option> 
+            <option value="sunset">Закат</option> 
+        </select></label> 
+        <label><input type="checkbox" id="soundToggle" checked /> Звук</label> 
+        <button id="backBtn">Назад</button> 
+    </div> 
+    <!-- Окно рекорда --> 
+    <div id="recordScreen" class="hidden"> 
+        <h2>🏆 Рекорд</h2> 
+        <p id="recordText">Пока рекордов нет</p> 
+        <button id="recordBackBtn">Назад</button> 
+    </div> 
+    <!-- Игровое поле --> 
+    <div class="game" id="game"> 
+        <div class="birdsLayer" id="birdsLayer"></div>
+        <div id="cactusContainer"></div> 
+        <div id="dino"></div> 
+        <div id="road"></div> 
+        <div id="score">0</div> 
+    </div> 
+    <!-- Меню после проигрыша --> 
+    <div id="gameOverMenu" class="hidden"> 
+        <h2>💀 Игра окончена</h2> 
+        <p id="finalScore"></p> 
+        <button id="restartBtn">Начать заново</button> 
+        <button id="goToMenuBtn">Главное меню</button> 
+    </div> 
+    <script src="script.js"></script> 
+</body> 
+</html>
