@@ -97,21 +97,12 @@ button:hover {
 /* Птицы */
 .bird {
   position: absolute;
-  width: 70px;
+  width: 60px;
   height: 55px;
   background-image: url("img/bird.gif");
   background-repeat: no-repeat;
   background-size: contain;
   z-index: 2;
-}
-
-.bird.small {
-  width: 50px;
-  height: 35px;
-}
-.bird.big {
-  width: 70px;
-  height: 55px;
 }
 
 /* Дорога */

@@ -110,7 +110,7 @@ function gameLoop(timestamp) {
     if (isGameOver) return;
     if (!lastFrameTime) lastFrameTime = timestamp;
 
-    const delta = (timestamp - lastFrameTime) / 16.6667; // нормализация по 60 fps
+    let delta = (timestamp - lastFrameTime) / 16.6667; // нормализация по 60 fps
     lastFrameTime = timestamp;
 
     // обновляем объекты с текущей скоростью
@@ -119,7 +119,7 @@ function gameLoop(timestamp) {
     updateRoad(delta);
 
     // счёт увеличивается равномерно
-    score += 0.08;
+    score += 0.1;
     scoreEl.textContent = Math.floor(score);
 
     // постепенное увеличение скорости объектов
@@ -140,9 +140,12 @@ function gameLoop(timestamp) {
     // спавн птиц
     if (timestamp - lastBirdSpawn > birdSpawnInterval) {
         spawnBird();
-        const birds = birdContainer.querySelectorAll(".bird");
-        const lastBird = birds[birds.length - 1];
-        if (lastBird) lastBird.style.top = Math.random() < 0.5 ? "70px" : "140px";
+        let birds = birdContainer.querySelectorAll(".bird");
+        let lastBird = birds[birds.length - 1];
+        if (lastBird) {
+            const heights = ["10px"];
+            lastBird.style.top = heights[Math.floor(Math.random() * heights.length)];
+        }
         lastBirdSpawn = timestamp;
     }
     updateScoreAndCollisions();
@@ -155,6 +158,12 @@ function startGame() {
     if (soundToggle.checked) sounds.start.play();
     toggleScreen(game);
     resetGame();
+    setTimeout(() => requestAnimationFrame(gameLoop), 500);
+    return;
+}
+
+function pauseGame() {
+    
 }
 
 // === ПРОИГРЫШ ===
@@ -203,7 +212,7 @@ function showRecord() {
 
 // === СПАВНЫ ===
 function spawnCactus() {
-    const c = document.createElement("div");
+    let c = document.createElement("div");
     c.className = "cactus";
 
     // выбираем тип кактуса
@@ -224,9 +233,9 @@ function spawnCactus() {
 }
 
 function spawnBird() {
-    const b = document.createElement("div");
-    b.className = "bird " + (Math.random() < 0.5 ? "small" : "big");
-    b.style.top = (Math.random() < 0.5 ? "70px" : "140px");
+    let b = document.createElement("div");
+    b.className = "bird";
+    b.style.top = (Math.random() < 0.5 ? "60px" : "140px");
     b.style.left = (game.offsetWidth + 20) + "px";
     birdContainer.appendChild(b);
     activeBirds.push(b);
@@ -235,7 +244,7 @@ function spawnBird() {
 // === ОБНОВЛЕНИЕ ===
 function updateCactuses(delta) {
     for (let i = activeCactuses.length - 1; i >= 0; i--) {
-        const c = activeCactuses[i];
+        let c = activeCactuses[i];
         let x = parseFloat(c.style.left);
         if (isNaN(x)) x = game.offsetWidth;
 
@@ -252,7 +261,7 @@ function updateCactuses(delta) {
 
 function updateBirds(delta) {
     for (let i = activeBirds.length - 1; i >= 0; i--) {
-        const b = activeBirds[i];
+        let b = activeBirds[i];
         let x = parseFloat(b.style.left);
         if (isNaN(x)) x = game.offsetWidth;
 
@@ -268,15 +277,15 @@ function updateBirds(delta) {
 }
 
 function updateRoad(delta) {
-    const cur = parseFloat(road.dataset.pos || 0);
-    const next = cur - gameSpeed * delta; // движение дороги тоже зависит от gameSpeed
+    let cur = parseFloat(road.dataset.pos || 0);
+    let next = cur - gameSpeed * delta; // движение дороги тоже зависит от gameSpeed
     road.style.backgroundPositionX = next + "px";
     road.dataset.pos = next;
 }
 
 function updateScoreAndCollisions() {
     // хитбокс динозавра — чуть меньше реального элемента
-    const dRect = {
+    let dRect = {
         top: dino.offsetTop + 10,
         bottom: dino.offsetTop + dino.offsetHeight - 5,
         left: dino.offsetLeft + 10,
@@ -284,14 +293,14 @@ function updateScoreAndCollisions() {
     };
 
     // проверка столкновений с кактусами
-    for (const c of activeCactuses) {
-        const width = parseFloat(c.style.width);
-        const height = parseFloat(c.style.height);
-        const left = parseFloat(c.style.left);
-        const bottom = parseFloat(c.style.bottom);
+    for (let c of activeCactuses) {
+        let width = parseFloat(c.style.width);
+        let height = parseFloat(c.style.height);
+        let left = parseFloat(c.style.left);
+        let bottom = parseFloat(c.style.bottom);
 
         // хитбокс строго по видимой части
-        const cactusHitbox = {
+        let cactusHitbox = {
             top: game.offsetTop + game.offsetHeight - bottom - height,
             bottom: game.offsetTop + game.offsetHeight - bottom,
             left: left + 2,   // немного сужаем по бокам
@@ -308,22 +317,27 @@ function updateScoreAndCollisions() {
     }
 
     // проверка столкновений с птицами
-    for (const b of activeBirds) {
-        const width = parseFloat(b.style.width);
-        const height = parseFloat(b.style.height);
-        const left = parseFloat(b.style.left);
-        const top = parseFloat(b.style.top);
+    for (let b of activeBirds) {
+        let top = parseFloat(b.style.top);
+        let left = parseFloat(b.style.left);
+        let width = parseFloat(b.offsetWidth); 
+        let height = parseFloat(b.offsetHeight);
 
-        const birdHitbox = {
-            top: top + 5,                // сужаем сверху
-            bottom: top + height - 5,    // сужаем снизу
-            left: left + 5,              // сужаем по бокам
-            right: left + width - 5
+        // хитбокс строго по видимой части птицы
+        let birdHitbox = {
+            top: top,               // верхняя граница строго по CSS
+            bottom: top + height,   // нижняя граница
+            left: left,             // левая граница
+            right: left + width     // правая граница
         };
 
-        if (!(dRect.right < birdHitbox.left || dRect.left > birdHitbox.right || dRect.bottom < birdHitbox.top || dRect.top > birdHitbox.bottom)) {
+        if (!(dRect.right < birdHitbox.left || 
+            dRect.left > birdHitbox.right || 
+            dRect.bottom < birdHitbox.top || 
+            dRect.top > birdHitbox.bottom)) {
             gameOver();
             return;
         }
     }
+
 }
