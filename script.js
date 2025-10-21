@@ -151,14 +151,9 @@ function gameLoop(timestamp) {
     // спавн птиц
     if (timestamp - lastBirdSpawn > birdSpawnInterval) {
         spawnBird();
-        let birds = birdContainer.querySelectorAll(".bird");
-        let lastBird = birds[birds.length - 1];
-        if (lastBird) {
-            const heights = ["10px"];
-            lastBird.style.top = heights[Math.floor(Math.random() * heights.length)];
-        }
         lastBirdSpawn = timestamp;
     }
+
     updateScoreAndCollisions();
 
     requestAnimationFrame(gameLoop);
@@ -256,11 +251,18 @@ function spawnCactus() {
 function spawnBird() {
     let b = document.createElement("div");
     b.className = "bird";
-    b.style.top = (Math.random() < 0.5 ? "60px" : "140px");
+
+    // три возможные высоты
+    const heights = ["70px", "100px", "155px"];
+    b.style.top = heights[Math.floor(Math.random() * heights.length)];
+
+    // начинаем за пределами экрана
     b.style.left = (game.offsetWidth + 20) + "px";
+
     birdContainer.appendChild(b);
     activeBirds.push(b);
 }
+
 
 // === ОБНОВЛЕНИЕ ===
 function updateCactuses(delta) {
