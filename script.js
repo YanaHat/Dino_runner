@@ -91,13 +91,13 @@ document.addEventListener("keyup", e => {
 
 function jump() {
   if (soundToggle.checked) sounds.jump.play();
-  dino.style.backgroundImage = 'url("img/trex_jump.png")';
+  dino.querySelector("img").src = "img/trex_jump.png";
   dino.classList.add("jump");
   isJumping = true;
   setTimeout(() => {
     dino.classList.remove("jump");
     isJumping = false;
-    dino.style.backgroundImage = 'url("img/trex.png")';
+    dino.querySelector("img").src = "img/trex.png";
   }, 400);
 }
 
@@ -105,11 +105,11 @@ function duck(active) {
   if (active) {
     isDucking = true;
     dino.classList.add("duck");
-    dino.style.backgroundImage = 'url("img/trex_oath.png")';
+    dino.querySelector("img").src = "img/trex_oath.png";
   } else {
     isDucking = false;
     dino.classList.remove("duck");
-    dino.style.backgroundImage = 'url("img/trex.png")';
+    dino.querySelector("img").src = "img/trex.png";
   }
 }
 
@@ -231,19 +231,34 @@ function spawnCactus() {
     let c = document.createElement("div");
     c.className = "cactus";
 
-    // выбираем тип кактуса
+    let img = document.createElement("img");
+    img.className = "cactus-img";
+
     if (Math.random() < 0.5) {
-        c.style.backgroundImage = 'url("img/cactus1.png")';
-        c.style.width = "50px";  // фиксируем ширину
-        c.style.height = "55px"; // фиксируем высоту
+        img.src = "img/cactus1.png";
+        c.style.width = "35px";  // хитбокс
+        c.style.height = "45px";
+        img.style.width = "60px";
+        img.style.height = "60px";
+        img.style.left = "-10px";
+        img.style.bottom = "-15px";
     } else {
-        c.style.backgroundImage = 'url("img/cactus2.png")';
-        c.style.width = "55px";
-        c.style.height = "60px";
+        img.src = "img/cactus2.png";
+        c.style.width = "45px";
+        c.style.height = "50px";
+        img.style.width = "70px";
+        img.style.height = "70px";
+        img.style.left = "-15px";
+        img.style.bottom = "-20px";
     }
 
-    c.style.bottom = "20px";              // все кактусы на одной линии
+    img.style.position = "absolute";
+    img.style.pointerEvents = "none";
+    c.appendChild(img);
+
+    c.style.bottom = "20px"; 
     c.style.left = (game.offsetWidth + 20) + "px";
+
     cactusContainer.appendChild(c);
     activeCactuses.push(c);
 }
@@ -252,17 +267,24 @@ function spawnBird() {
     let b = document.createElement("div");
     b.className = "bird";
 
-    // три возможные высоты
-    const heights = ["70px", "100px", "155px"];
-    b.style.top = heights[Math.floor(Math.random() * heights.length)];
+    let img = document.createElement("img");
+    img.className = "bird-img";
+    img.src = "img/bird.gif";
+    img.style.position = "absolute";
+    img.style.width = "80px";
+    img.style.height = "60px";
+    img.style.left = "-20px";
+    img.style.top = "-10px";
+    img.style.pointerEvents = "none";
+    b.appendChild(img);
 
-    // начинаем за пределами экрана
+    let heights = ["70px", "100px", "155px"];
+    b.style.top = heights[Math.floor(Math.random() * heights.length)];
     b.style.left = (game.offsetWidth + 20) + "px";
 
     birdContainer.appendChild(b);
     activeBirds.push(b);
 }
-
 
 // === ОБНОВЛЕНИЕ ===
 function updateCactuses(delta) {
@@ -317,23 +339,13 @@ function updateScoreAndCollisions() {
 
     // проверка столкновений с кактусами
     for (let c of activeCactuses) {
-        let width = parseFloat(c.style.width);
-        let height = parseFloat(c.style.height);
-        let left = parseFloat(c.style.left);
-        let bottom = parseFloat(c.style.bottom);
+        let cRect = c.getBoundingClientRect();
+        let dRectAbs = dino.getBoundingClientRect();
 
-        // хитбокс строго по видимой части
-        let cactusHitbox = {
-            top: game.offsetTop + game.offsetHeight - bottom - height,
-            bottom: game.offsetTop + game.offsetHeight - bottom,
-            left: left + 2,   // немного сужаем по бокам
-            right: left + width - 2
-        };
-
-        if (!(dRect.right < cactusHitbox.left ||
-              dRect.left > cactusHitbox.right ||
-              dRect.bottom < cactusHitbox.top ||
-              dRect.top > cactusHitbox.bottom)) {
+        if (!(dRectAbs.right < cRect.left ||
+            dRectAbs.left > cRect.right ||
+            dRectAbs.bottom < cRect.top ||
+            dRectAbs.top > cRect.bottom)) {
             gameOver();
             return;
         }
@@ -348,10 +360,10 @@ function updateScoreAndCollisions() {
 
         // хитбокс строго по видимой части птицы
         let birdHitbox = {
-            top: top,               // верхняя граница строго по CSS
-            bottom: top + height,   // нижняя граница
-            left: left,             // левая граница
-            right: left + width     // правая граница
+            top: top,               
+            bottom: top + height,   
+            left: left,            
+            right: left + width     
         };
 
         if (!(dRect.right < birdHitbox.left || 

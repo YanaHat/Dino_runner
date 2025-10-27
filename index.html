@@ -34,18 +34,20 @@
         <p id="recordText">Пока рекордов нет</p> 
         <button id="recordBackBtn">Назад</button> 
     </div> 
-    <!-- Игровое поле --> 
-    <div class="game" id="game"> 
-        <div class="birdsLayer" id="birdsLayer"></div>
-        <div id="cactusContainer"></div> 
-        <div id="dino"></div> 
-        <div id="road"></div> 
-        <div id="score">0</div> 
+    <div id="game" class="game">
+        <div id="birdsLayer"></div>
+        <div id="cactusContainer"></div>
+        <div id="dino">
+            <img src="img/trex.png" alt="dino" />
+        </div>
+        <div id="road"></div>
+        <div id="score">0</div>
         <button id="pauseBtn">Пауза</button>
+    </div>
     </div> 
     <!-- Меню паузы -->
     <div id="pauseMenu" class="hidden">
-        <h2>⏸ Пауза</h2>
+        <h2>|| Пауза</h2>
         <button id="resumeBtn">Продолжить</button>
         <button id="pauseToMenuBtn">Главное меню</button>
     </div>
